@@ -11,17 +11,11 @@ const genList = (current: number, pageSize: number) => {
     tableListDataSource.push({
       key: index,
       disabled: i % 6 === 0,
-      href: 'https://ant.design',
-      avatar: [
-        'https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png',
-        'https://gw.alipayobjects.com/zos/rmsportal/udxAbMEhpwthVVcjLXik.png',
-      ][i % 2],
-      name: `TradeCode ${index}`,
-      owner: '曲丽丽',
-      desc: '这是一段描述',
-      callNo: Math.floor(Math.random() * 1000),
+      name: `李四 ${index}`,
+      age: '21',
+      address: '广州市天河区北街11号',
+      school: '中山大学',
       status: Math.floor(Math.random() * 10) % 4,
-      updatedAt: new Date(),
       createdAt: new Date(),
       progress: Math.ceil(Math.random() * 100),
     });
@@ -30,7 +24,7 @@ const genList = (current: number, pageSize: number) => {
   return tableListDataSource;
 };
 
-let tableListDataSource = genList(1, 2);
+let tableListDataSource = genList(1, 20);
 
 function getRule(req: Request, res: Response, u: string) {
   let url = u;
@@ -71,6 +65,18 @@ function getRule(req: Request, res: Response, u: string) {
   if (params.name) {
     dataSource = dataSource.filter(data => data.name.includes(params.name || ''));
   }
+  if (params.age) {
+    dataSource = dataSource.filter(data => data.age.includes(params.age || ''));
+  }
+
+  if (params.address) {
+    dataSource = dataSource.filter(data => data.address.includes(params.address || ''));
+  }
+
+  if (params.school) {
+    dataSource = dataSource.filter(data => data.school.includes(params.school || ''));
+  }
+
   const result = {
     data: dataSource,
     total: tableListDataSource.length,
@@ -90,7 +96,7 @@ function postRule(req: Request, res: Response, u: string, b: Request) {
   }
 
   const body = (b && b.body) || req.body;
-  const { method, name, desc, key } = body;
+  const { method, name, age, key, address, school, status } = body;
 
   switch (method) {
     /* eslint no-case-declarations:0 */
@@ -102,17 +108,11 @@ function postRule(req: Request, res: Response, u: string, b: Request) {
         const i = Math.ceil(Math.random() * 10000);
         const newRule = {
           key: tableListDataSource.length,
-          href: 'https://ant.design',
-          avatar: [
-            'https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png',
-            'https://gw.alipayobjects.com/zos/rmsportal/udxAbMEhpwthVVcjLXik.png',
-          ][i % 2],
           name,
-          owner: '曲丽丽',
-          desc,
-          callNo: Math.floor(Math.random() * 1000),
-          status: Math.floor(Math.random() * 10) % 2,
-          updatedAt: new Date(),
+          age,
+          address,
+          school,
+          status,
           createdAt: new Date(),
           progress: Math.ceil(Math.random() * 100),
         };
@@ -126,8 +126,8 @@ function postRule(req: Request, res: Response, u: string, b: Request) {
         let newRule = {};
         tableListDataSource = tableListDataSource.map(item => {
           if (item.key === key) {
-            newRule = { ...item, desc, name };
-            return { ...item, desc, name };
+            newRule = { ...item, age, name, address, school, status };
+            return { ...item, age, name, address, school, status };
           }
           return item;
         });

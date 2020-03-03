@@ -1,14 +1,12 @@
 export interface TableListItem {
   key: number;
   disabled?: boolean;
-  href: string;
   avatar: string;
   name: string;
-  owner: string;
-  desc: string;
-  callNo: number;
-  status: number;
-  updatedAt: Date;
+  age: string;
+  address: string;
+  school: string;
+  status: string;
   createdAt: Date;
   progress: number;
 }
@@ -28,8 +26,10 @@ export interface TableListParams {
   sorter?: string;
   status?: string;
   name?: string;
-  desc?: string;
+  age?: string;
   key?: number;
+  address?: string;
+  school?: string;
   pageSize?: number;
   currentPage?: number;
 }

@@ -33,20 +33,23 @@ const handleAdd = async (fields: TableListItem) => {
  * @param fields
  */
 const handleUpdate = async (fields: FormValueType) => {
-  const hide = message.loading('正在配置');
+  const hide = message.loading('正在修改');
   try {
     await updateRule({
       name: fields.name,
-      desc: fields.desc,
+      age: fields.age,
+      address: fields.address,
+      school: fields.school,
+      status: fields.status,
       key: fields.key,
     });
     hide();
 
-    message.success('配置成功');
+    message.success('修改成功');
     return true;
   } catch (error) {
     hide();
-    message.error('配置失败请重试！');
+    message.error('修改失败请重试！');
     return false;
   }
 };
@@ -80,62 +83,76 @@ const TableList: React.FC<{}> = () => {
   const actionRef = useRef<ActionType>();
   const columns: ProColumns<TableListItem>[] = [
     {
-      title: '规则名称',
+      title: '名字',
       dataIndex: 'name',
       rules: [
         {
           required: true,
-          message: '规则名称为必填项',
+          message: '请输入名字',
         },
       ],
     },
     {
-      title: '描述',
-      dataIndex: 'desc',
+      title: '年龄',
+      dataIndex: 'age',
+      sorter: 'true',
+      rules: [
+        {
+          required: true,
+          message: '请输入年龄',
+        },
+      ],
+    },
+    {
+      title: '居住地址',
+      dataIndex: 'address',
       valueType: 'textarea',
+      rules: [
+        {
+          required: true,
+          message: '请输入居住地址',
+        },
+      ],
     },
     {
-      title: '服务调用次数',
-      dataIndex: 'callNo',
-      sorter: true,
-      hideInForm: true,
-      renderText: (val: string) => `${val} 万`,
+      title: '学校',
+      dataIndex: 'school',
+      rules: [
+        {
+          required: true,
+          message: '请输入您所在的学校',
+        },
+      ],
     },
     {
-      title: '状态',
+      title: '学历',
       dataIndex: 'status',
-      hideInForm: true,
       valueEnum: {
-        0: { text: '关闭', status: 'Default' },
-        1: { text: '运行中', status: 'Processing' },
-        2: { text: '已上线', status: 'Success' },
-        3: { text: '异常', status: 'Error' },
+        0: { text: '高中' },
+        1: { text: '本科' },
+        2: { text: '硕士' },
+        3: { text: '博士' },
       },
-    },
-    {
-      title: '上次调度时间',
-      dataIndex: 'updatedAt',
-      sorter: true,
-      valueType: 'dateTime',
-      hideInForm: true,
+      rules: [
+        {
+          required: true,
+          message: '请输入您的学历',
+        },
+      ],
     },
     {
       title: '操作',
       dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => (
-        <>
-          <a
-            onClick={() => {
-              handleUpdateModalVisible(true);
-              setStepFormValues(record);
-            }}
-          >
-            配置
-          </a>
-          <Divider type="vertical" />
-          <a href="">订阅警报</a>
-        </>
+        <a
+          onClick={() => {
+            handleUpdateModalVisible(true);
+            setStepFormValues(record);
+          }}
+        >
+          修改
+        </a>
       ),
     },
   ];
@@ -143,7 +160,7 @@ const TableList: React.FC<{}> = () => {
   return (
     <PageHeaderWrapper>
       <ProTable<TableListItem>
-        headerTitle="查询表格"
+        headerTitle="学生信息表格"
         actionRef={actionRef}
         rowKey="key"
         onChange={(_, _filter, _sorter) => {
@@ -172,7 +189,6 @@ const TableList: React.FC<{}> = () => {
                   selectedKeys={[]}
                 >
                   <Menu.Item key="remove">批量删除</Menu.Item>
-                  <Menu.Item key="approval">批量审批</Menu.Item>
                 </Menu>
               }
             >
@@ -182,17 +198,11 @@ const TableList: React.FC<{}> = () => {
             </Dropdown>
           ),
         ]}
-        tableAlertRender={(selectedRowKeys, selectedRows) => (
-          <div>
-            已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
-            <span>
-              服务调用次数总计 {selectedRows.reduce((pre, item) => pre + item.callNo, 0)} 万
-            </span>
-          </div>
-        )}
+        tableAlertRender={false}
         request={params => queryRule(params)}
         columns={columns}
         rowSelection={{}}
+        options={false}
       />
       <CreateForm onCancel={() => handleModalVisible(false)} modalVisible={createModalVisible}>
         <ProTable<TableListItem, TableListItem>
